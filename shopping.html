@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Playlist editor</title>
+    <script>
+        var myCart = [];
+        var totalPrice = [];
+        var products = [];
+
+        function generateProducts() {
+            fetch("https://raw.githubusercontent.com/dotnet-presentations/ContosoCrafts/master/src/wwwroot/data/products.json")
+                .then(response => response.json())
+                .then(json => {
+                    products = json;
+                    for (var i = 0; i < products.length; i++) {
+                        products[i].price = Math.floor(Math.random() * 100);
+                    }
+                    createUIfromProducts();
+                });
+        }
+
+
+        function createUIfromProducts() {
+            console.log("create ui from products");
+            console.log(products);
+            var theUl = document.getElementById('left-side');
+
+            for (let i = 0; i < products.length; i++) {
+                var theLi = document.createElement('li');
+                var myImg = document.createElement('img');
+                var para = document.createElement('p');
+                var myTitle = document.createElement('h3');
+                var myPrice = document.createElement('h5');
+                var mYId = document.createElement('h2');
+                var myBtn = document.createElement('button');
+                myPrice.innerHTML = "Price: " + products[i].price + " $";
+                myTitle.innerHTML = products[i].Title;
+                para.innerHTML = products[i].Description;
+                myImg.src = products[i].img;
+                myImg.classList.add('productImg');
+                myBtn.innerHTML = 'addd to cart';
+                mYId.innerHTML = products[i].Id;
+                myBtn.theindex = i;
+                myBtn.addEventListener('click', addToCart);
+                theUl.append(theLi);
+                theLi.append(mYId);
+                theLi.append(myTitle);
+                theLi.append(myImg);
+                theLi.append(para);
+                theLi.append(myPrice)
+                theLi.append(myBtn);
+
+
+
+            }
+
+        }
+
+        function addToCart(e) {
+            if(Amount(products[e.target.theindex].Title) ){
+                alert('more then one');
+                return;
+            }
+            var menu = document.getElementById('right-side');
+            var newItem = document.createElement('h5');
+            var price = document.getElementById('total-price');
+            var menuBtn = document.createElement('button');
+            var addBtn = document.createElement('button');
+            var TheItemPrice = document.createElement('h5');
+            var line = document.createElement('hr');
+            var itemImg = document.createElement('img');
+            var newItemAmount = document.createElement('h5');
+
+            addBtn.innerHTML = 'add Item';
+            addBtn.index =myCart.length;
+            itemImg.src = products[e.target.theindex].img;
+            itemImg.classList.add('smallPic');
+            menuBtn.innerHTML = 'Remove Item';
+            newItemAmount.innerHTML =1;
+            menuBtn.index = myCart.length;
+            menu.append(newItem);
+            menu.append(TheItemPrice); 
+            menu.append(newItemAmount) ;                  
+           menu.append(itemImg);
+           menu.append(menuBtn); 
+           menu.append(addBtn);  
+           menu.append(line);
+            TheItemPrice.innerHTML =products[e.target.theindex].price+' $';
+
+
+            newItem.innerHTML = products[e.target.theindex].Title;
+
+            myCart.push(products[e.target.theindex].Title);
+            totalPrice.push(products[e.target.theindex].price)
+            console.log(myCart);
+            console.log(totalPrice);
+
+            menuBtn.addEventListener('click', function () {
+                if(newItemAmount.innerHTML >1){
+                    newItemAmount.innerHTML-=1;
+                  
+                    price.innerHTML = SumToPay()+' $';
+                    return;
+                }
+                delete myCart[menuBtn.index];
+                 totalPrice[menuBtn.index] = 0;
+                 newItemAmount.remove();
+                menuBtn.remove();
+                newItem.remove();
+                itemImg.remove();
+                TheItemPrice.remove();
+                line.remove();
+                console.log(myCart);
+                console.log(totalPrice);
+                price.innerHTML = SumToPay()+' $';
+                
+            });
+
+            addBtn.addEventListener('click',function(){
+                myCart.push(products[e.target.theindex].Title);
+            totalPrice.push(products[e.target.theindex].price);
+            var a = parseInt(newItemAmount.innerHTML);
+            newItemAmount.innerHTML = a+1;
+           
+            price.innerHTML = SumToPay()+' $';
+            })
+            price.innerHTML = SumToPay()+' $';
+           
+        }
+
+        function SumToPay() {
+            var total = 0
+            for (let i = 0; i < totalPrice.length; i++) {
+
+                total += totalPrice[i];
+
+
+            }
+            return total;
+        }
+
+        function Amount(item){
+            
+            for (let i = 0; i < myCart.length; i++) {
+                if(myCart[i]==item){
+                    return true;
+                }
+                
+                
+            }
+        }
+
+    </script>
+</head>
+
+<body onload="generateProducts()">
+    <div class="grid-container">
+        <div class="grid-item ">
+            <ul id='left-side' style="display: flex;">
+
+            </ul>
+        </div>
+        <div class="grid-item  ">
+            
+            <div class='right' >
+                <h1>cart</h1>
+                <div id='right-side'>
+
+                </div>
+                <h2>total:</h2>
+                <h2 id='total-price'>0</h2>
+            </div>
+
+            
+            
+        </div>
+
+
+    </div>
+
+</body>
+
+</html>
