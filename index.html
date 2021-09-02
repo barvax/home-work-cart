@@ -18,7 +18,7 @@
                 .then(json => {
                     products = json;
                     for (var i = 0; i < products.length; i++) {
-                        products[i].price = Math.floor(Math.random() * 100);
+                        products[i].price = Math.floor(Math.random() * 100+1);
                     }
                     createUIfromProducts();
                 });
@@ -26,8 +26,7 @@
 
 
         function createUIfromProducts() {
-            console.log("create ui from products");
-            console.log(products);
+           ///יצירה של האתר עצמו עם רשימת המוצרים///
             var theUl = document.getElementById('left-side');
 
             for (let i = 0; i < products.length; i++) {
@@ -60,67 +59,82 @@
             }
 
         }
-
+////////////הכנסת המוצר לעגלה///////////////
         function addToCart(e) {
+		
+			///אם המוצר קיים בעגלה ניתן להוסיף רק דרך העגלה/////
             if(Amount(products[e.target.theindex].Title) ){
                 alert('more then one');
                 return;
             }
+			
             var menu = document.getElementById('right-side');
             var newItem = document.createElement('h5');
             var price = document.getElementById('total-price');
-            var menuBtn = document.createElement('button');
+            var removeBtn = document.createElement('button');
             var addBtn = document.createElement('button');
             var TheItemPrice = document.createElement('h5');
             var line = document.createElement('hr');
             var itemImg = document.createElement('img');
             var newItemAmount = document.createElement('h5');
-
-            addBtn.innerHTML = 'add Item';
-            addBtn.index =myCart.length;
+             //להוסיף פריט
+            addBtn.innerHTML = '+'; 
+            addBtn.index = e.target.theindex;
+			///להוריד פריט
+			 removeBtn.innerHTML = '-';
+			 removeBtn.index = e.target.theindex;
+			 //עדכון תמונה
             itemImg.src = products[e.target.theindex].img;
             itemImg.classList.add('smallPic');
-            menuBtn.innerHTML = 'Remove Item';
+           //כמות במלאי
             newItemAmount.innerHTML =1;
-            menuBtn.index = myCart.length;
+			//מחיר
+			 TheItemPrice.innerHTML =products[e.target.theindex].price+' $';
+			 //שם המוצר
+			    newItem.innerHTML = products[e.target.theindex].Title;
+           
             menu.append(newItem);
             menu.append(TheItemPrice); 
             menu.append(newItemAmount) ;                  
-           menu.append(itemImg);
-           menu.append(menuBtn); 
-           menu.append(addBtn);  
+           menu.append(itemImg);           
+           menu.append(addBtn); 
+			menu.append(removeBtn); 		   
            menu.append(line);
-            TheItemPrice.innerHTML =products[e.target.theindex].price+' $';
+                   
 
-
-            newItem.innerHTML = products[e.target.theindex].Title;
-
+				   ////  הכנסת המוצרים שבעגלה למערך//////////
             myCart.push(products[e.target.theindex].Title);
             totalPrice.push(products[e.target.theindex].price)
-            console.log(myCart);
-            console.log(totalPrice);
-
-            menuBtn.addEventListener('click', function () {
+          
+            
+////////////// כפתור הורדת מוצר////////////
+            removeBtn.addEventListener('click', function () {
+			
+		
                 if(newItemAmount.innerHTML >1){
-                    newItemAmount.innerHTML-=1;
+                    newItemAmount.innerHTML-=1;                
                   
-                    price.innerHTML = SumToPay()+' $';
+					
+					RemoveItemFromArray(e.target.theindex);
+					  price.innerHTML = SumToPay()+' $';
                     return;
                 }
-                delete myCart[menuBtn.index];
-                 totalPrice[menuBtn.index] = 0;
+            
+			   RemoveItemFromArray(e.target.theindex);
                  newItemAmount.remove();
-                menuBtn.remove();
+                removeBtn.remove();
+				addBtn.remove();
                 newItem.remove();
                 itemImg.remove();
                 TheItemPrice.remove();
                 line.remove();
-                console.log(myCart);
-                console.log(totalPrice);
+           
                 price.innerHTML = SumToPay()+' $';
                 
             });
 
+			
+			//////////כפתור הוספת עוד מוצר מעגלת הקניות/////////////
             addBtn.addEventListener('click',function(){
                 myCart.push(products[e.target.theindex].Title);
             totalPrice.push(products[e.target.theindex].price);
@@ -132,7 +146,7 @@
             price.innerHTML = SumToPay()+' $';
            
         }
-
+///פומקציית עזר לחישוב מחיר כולל בענלה///////
         function SumToPay() {
             var total = 0
             for (let i = 0; i < totalPrice.length; i++) {
@@ -154,11 +168,44 @@
                 
             }
         }
+		/////פונקצית עזר להורדה כירורגית של מוצר ומחיר מהמערך///////////
+		function RemoveItemFromArray(index){
+		var temp;
+		var priceTemp;
+		if(myCart.length>0){
+		
+		for (let i = 0; i < myCart.length; i++){
+		if(products[index].Title==myCart[i]){
+		delete totalPrice[i];
+		delete myCart[i];
+		 temp = myCart[myCart.length-1];
+		 priceTemp = totalPrice[myCart.length-1];
+		 console.log(temp)
+		
+		 myCart[i] = temp;
+		 totalPrice[i] = priceTemp;
+		 totalPrice.pop();
+		 myCart.pop();
+		 return;
+		}
+		
+		}
+		}
+		
+		
+		}
+		
+		///זה סתם עזר לי לראות מי נגד מי////////
+		function showCart(){
+		console.log(myCart);
+		console.log(totalPrice)
+		}
 
     </script>
 </head>
 
 <body onload="generateProducts()">
+<button onclick='showCart()'>Show cart</button>
     <div class="grid-container">
         <div class="grid-item ">
             <ul id='left-side' style="display: flex;">
@@ -171,9 +218,11 @@
                 <h1>cart</h1>
                 <div id='right-side'>
 
-                </div>
+                </div >
+				<div style='display:flex';>
                 <h2>total:</h2>
-                <h2 id='total-price'>0</h2>
+                <h2 id='total-price' style='margin-left:5px;'>0</h2>
+				</div>
             </div>
 
             
