@@ -17,7 +17,7 @@ h3{
 }
 .grid-container {
     display: grid;
-  grid-template-columns: auto 15% ;
+  grid-template-columns: 85% 15% ;
     
     
   }
@@ -31,6 +31,8 @@ h3{
       position: fixed;
     height: 800px;
       overflow-y: scroll;
+	  text-align:center;
+	
   }
   .right::-webkit-scrollbar {
     display: none;
@@ -38,6 +40,8 @@ h3{
 .smallPic{
     width: 75px;
     padding: 10px;
-    margin-right: 50px;
+	margin-bottom:20px;
+ 
 }
+
   
